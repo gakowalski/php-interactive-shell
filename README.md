@@ -36,9 +36,19 @@ Although this script doesn't implement any special features itself, there are so
   * Use up and down arrow keys to browse recent commands while editing;
   * Use F7 key to open list of all recent commands in text window;
   * Use last command as a template for new one;
-  
+
 For complete listing please take a look at [TechNet article about DOSKEY][3].
+
+## Ideas taken from [PsySH][4]
+
+* `$_` contains result of last operation or `NULL`.
+* `$_e` contains last uncatched exception (uncatched by your code).
+
+## Other info
+
+* `break` command stops the shell but not he whole script (so you can call shell.php from other scripts - e.g. instead of `die()` while debugging).
 
 [1]: http://www.php.net/manual/en/intro.readline.php
 [2]: http://php.net/manual/en/features.commandline.interactive.php#98642
 [3]: https://technet.microsoft.com/en-us/library/cc753867.aspx
+[4]: http://psysh.org/
