@@ -17,13 +17,28 @@ To run it:
 
 `php shell.php`
 
-Then try to execute some commands, e.g. `echo "Hello\n"` (trailing `;` is optional). There is no command prompt, you can add it manually in the code.
+Then try to execute some commands, e.g. `echo "Hello\n"`. Last `;` is optional to simplify issuing of single commands. All other semicolons are mandatory.
 
-To stop it, simply execute:
+At this time there is no command prompt, you can add it manually in the code.
+
+To stop the program, simply execute:
 
 `exit`
 
-Thanks to Windows console built-in command history, you can use arrow keys to browse previously used commands.
+## Special properties of Windows console
+
+Although this script doesn't implement any special features itself, there are some useful functionalities inherited from Windows [DOSKEY][3] utility, which is now merged into Windows command-line processor:
+
+* Line editing
+  * You can change cursor position within edited line with arrow keys, `HOME`, `END` and other keys;
+  * Insert and replace mode switched with `INSERT` key;
+* Command history
+  * Use up and down arrow keys to browse recent commands while editing;
+  * Use F7 key to open list of all recent commands in text window;
+  * Use last command as a template for new one;
+  
+For complete listing please take a look at [TechNet article about DOSKEY][3].
 
 [1]: http://www.php.net/manual/en/intro.readline.php
 [2]: http://php.net/manual/en/features.commandline.interactive.php#98642
+[3]: https://technet.microsoft.com/en-us/library/cc753867.aspx
