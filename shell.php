@@ -1,8 +1,21 @@
 <?php
 // Copyright (C) 2016 Grzegorz Kowalski, see LICENSE file
 
-function llecho($message) {
-	echo "// $message\n";
+function llecho($message, $ansi_color = '31m') {
+	if (strpos(php_uname(), 'Windows 10') !== false && file_exists('ansi_echo.bat')) {
+		$message = strtr("// $message", array(
+			'%' => '%%',
+			'^' => '^^',
+			'&' => '^&',
+			'<' => '^<',
+			'>' => '^>',
+			'|' => '^|',
+			' ' => "$!",
+		));
+		system("cmd /c ansi_echo.bat $ansi_color $message");
+	} else {
+		echo "// $message\n";
+	}
 }
 
 function php_syntax_check_func($data, $stdin, $stdout, $stderr)

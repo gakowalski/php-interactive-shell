@@ -39,6 +39,10 @@ Although this script doesn't implement any special features itself, there are so
 
 For complete listing please take a look at [TechNet article about DOSKEY][3].
 
+## ANSI colors
+
+On **Windows 10** output comments are colored red if `shell.php` can access helper batch file `ansi_echo.bat`. Batch file takes two arguments: ANSI color code and text message with space characters replaced with `$!`.
+
 ## Ideas taken from [PsySH][4]
 
 * `$_` contains result of last operation or `NULL`.
