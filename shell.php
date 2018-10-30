@@ -2,17 +2,10 @@
 // Copyright (C) 2016 Grzegorz Kowalski, see LICENSE file
 
 function llecho($message, $ansi_color = '31m') {
-	if (strpos(php_uname(), 'Windows 10') !== false && file_exists('ansi_echo.bat')) {
-		$message = strtr("// $message", array(
-			'%' => '%%',
-			'^' => '^^',
-			'&' => '^&',
-			'<' => '^<',
-			'>' => '^>',
-			'|' => '^|',
-			' ' => "$!",
-		));
-		system("cmd /c ansi_echo.bat $ansi_color $message");
+	if (strpos(php_uname(), 'Windows 10') !== false) {
+		system('powershell "[Text.Encoding]::UTF8.GetString([convert]::FromBase64String(\"'
+			. base64_encode('[' . $ansi_color . $message . '[0m')
+			.'\"))');
 	} else {
 		echo "// $message\n";
 	}
