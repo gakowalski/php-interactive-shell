@@ -96,23 +96,57 @@ while (true)
 		//echo "// executing $command_line\n";
 		eval($command_line);
 
+		/* test: array() */
 		if (is_array($_)) llecho('$_ is an array of length ' . count($_));
+
+		/* test_1: new Exception()
+			 test_2: unserialize('O:4:"Test_of_incomplete_object":1:{s:1:"i";N;}') */
 		if (is_object($_)) llecho('$_ is an object of class ' . get_class($_));
-		if (is_resource($_)) llecho('$_ is a resource');
+
+		/* test: $fp = fopen("foo", "w") */
+		if (is_resource($_)) llecho('$_ is a resource of type ' . get_resource_type($_));
+
+		/* test: $fp = fopen("foo", "w"); fclose($fp); $fp */
+		if (gettype($_) == 'resource (closed)') llecho('$_ is a closed resource');
+
+		/* test: "test" */
 		if (is_string($_)) llecho('$_ is a string of length ' . strlen($_));
-		if (is_callable($_)) llecho('$_ can be called as a function');
+
+		/* test: new Exception() */
+		if (is_object($_) && method_exists($_, '__toString' ))
+			llecho('$_ automatically converts to string of length ' . strlen($_));
+
+		/* test_1: $tmp = 'fopen'
+		   test_2: $tmp = function() { } */
+		if (!is_object($_) && is_callable($_, false, $callable_name)) llecho('$_ can be called by name ' . $callable_name);
+
+		/* test: null */
 		if (is_null($_)) llecho('$_ is null');
+
+		/* test: true */
 		if (is_bool($_)) llecho('$_ has boolean value of ' . ($_? 'true' : 'false'));
+
+		/* test: 0 */
 		if (is_numeric($_)) llecho('$_ has numeric value of ' . $_);
+
+		if (version_compare(phpversion(), '7.3.0', '>=')) {
+    	if (is_countable($_)) llecho('$_ is countable and has count ' . count($_));
+		}
 	}
 	catch (Exception $e) {
 		$_e = $e;
-		llecho('$_e is an object of class ' . get_class($_e));
+		llecho('$_e is an object of class ' . get_class($e));
 		llecho('$_e->getMessage() returns \'' . $e->getMessage() . '\'');
 	}
 	catch (\Exception $e) {
 		$_e = $e;
-		llecho('$_e is an object of class ' . get_class($_e));
+		llecho('$_e is an object of class ' . get_class($e));
+		llecho('$_e->getMessage() returns \'' . $e->getMessage() . '\'');
+	}
+	catch (\Error $e) { // Error is the base class for all internal PHP error exceptions.
+		$_e = $e;
+		llecho('Internal PHP error - probably FATAL!');
+		llecho('$_e is an object of class ' . get_class($e));
 		llecho('$_e->getMessage() returns \'' . $e->getMessage() . '\'');
 	}
 };
