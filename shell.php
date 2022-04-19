@@ -153,6 +153,11 @@ while (true)
 		if (version_compare(phpversion(), '7.3.0', '>=')) {
     	if (is_countable($_)) llecho('$_ is countable and has count ' . count($_));
 		}
+
+		/* test: [1,2,3] */
+		if (version_compare(phpversion(), '8.1.0', '>=')) {
+    	if (array_is_list($_)) llecho('$_ is a list');
+		}
 	}
 	catch (Exception $e) {
 		$_e = $e;
