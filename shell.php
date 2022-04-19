@@ -1,10 +1,20 @@
 <?php
 // Copyright (C) 2016 Grzegorz Kowalski, see LICENSE file
 
-function llecho($message, $ansi_color = '31m') {
+function ansi_color($R, $G, $B, $bold = false) {
+	return 30 + ($R?1:0) + ($G?2:0) + ($B?3:0) + ($bold?40:0);
+}
+
+function ansi_str($message, $code) {
+	return '[' . $code . 'm' . $message . '[0m';
+}
+
+// llecho('my message');
+// llech('my bold blue message', ansi_color(0, 0, 1, 1));
+function llecho($message, $ansi_color = '31') {
 	if (strpos(php_uname(), 'Windows 10') !== false) {
 		system('powershell "[Text.Encoding]::UTF8.GetString([convert]::FromBase64String(\"'
-			. base64_encode('[' . $ansi_color . $message . '[0m')
+			. base64_encode(ansi_str($message, $ansi_color))
 			.'\"))');
 	} else {
 		echo "// $message\n";
@@ -32,19 +42,11 @@ function execute_console_app($path, $process_function, $data = null)
 	if (is_resource($process)) {
 		$return_value = $process_function($data, $pipes[0], $pipes[1], $pipes[2]);
 
-		if (isset($pipes[2]) and is_resource($pipes[2])) {
-			fclose($pipes[2]);
-			unset($pipes[2]);
-		}
-
-		if (isset($pipes[1]) and is_resource($pipes[1])) {
-			fclose($pipes[1]);
-			unset($pipes[1]);
-		}
-
-		if (isset($pipes[0]) and is_resource($pipes[0])) {
-			fclose($pipes[0]);
-			unset($pipes[0]);
+		foreach ([2,1,0] as $i) {
+			if (isset($pipes[$i]) and is_resource($pipes[$i])) {
+				fclose($pipes[$i]);
+				unset($pipes[$i]);
+			}
 		}
 
 		$results = Array(
@@ -112,9 +114,6 @@ while (true)
 		/* test: $fp = fopen("foo", "w") */
 		if (is_resource($_)) llecho('$_ is a resource of type ' . get_resource_type($_));
 
-		/* test: $fp = fopen("foo", "w"); fclose($fp); $fp */
-		if (gettype($_) == 'resource (closed)') llecho('$_ is a closed resource');
-
 		/* test: "test" */
 		if (is_string($_)) llecho('$_ is a string of length ' . strlen($_));
 
@@ -129,12 +128,28 @@ while (true)
 		/* test: null */
 		if (is_null($_)) llecho('$_ is null');
 
+		/* test: array() */
+		if (empty($_)) llecho('$_ is empty');
+
 		/* test: true */
 		if (is_bool($_)) llecho('$_ has boolean value of ' . ($_? 'true' : 'false'));
 
 		/* test: 0 */
 		if (is_numeric($_)) llecho('$_ has numeric value of ' . $_);
 
+		/* test: array() */
+		if (version_compare(phpversion(), '7.1.0', '>=')) {
+			if (is_iterable($_)) llecho('$_ is iterable');
+		}
+
+		/* test: $fp = fopen("foo", "w"); fclose($fp); $fp */
+		if (version_compare(phpversion(), '7.2.0', '>=')) {
+			if (gettype($_) == 'resource (closed)') llecho('$_ is a closed resource');
+		} else {
+			if (gettype($_) == 'unknown type') llecho('$_ is a closed resource');
+		}
+
+		/* test: array() */
 		if (version_compare(phpversion(), '7.3.0', '>=')) {
     	if (is_countable($_)) llecho('$_ is countable and has count ' . count($_));
 		}
